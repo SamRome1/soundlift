@@ -24,6 +24,10 @@ Ever watched a video and thought *"what's that song?"* or *"where do I get that 
 
 Everything runs on your machine. No API keys, no accounts, no uploads.
 
+<p align="center">
+  <a href="docs/demo.mp4"><img src="docs/demo.gif" alt="Demo: paste a YouTube link into soundlift and scroll through the identified songs and extracted sound effects" width="85%"></a>
+</p>
+
 ## Example
 
 One 11-minute video ([Green Code: *I Built a Neural Network from Scratch in SCRATCH*](https://www.youtube.com/watch?v=5COUxxTRcL0)) → **14 songs** (10 identified by name, 4 unidentified stock tracks) and **28 sound effects**, each with timestamps and a downloadable clip.
