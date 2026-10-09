@@ -28,16 +28,6 @@ Everything runs on your machine. No API keys, no accounts, no uploads.
   <a href="docs/demo.mp4"><img src="docs/demo.gif" alt="Demo: paste a YouTube link into soundlift and scroll through the identified songs and extracted sound effects" width="85%"></a>
 </p>
 
-## Example
-
-One 11-minute video ([Green Code: *I Built a Neural Network from Scratch in SCRATCH*](https://www.youtube.com/watch?v=5COUxxTRcL0)) → **14 songs** (10 identified by name, 4 unidentified stock tracks) and **28 sound effects**, each with timestamps and a downloadable clip.
-
-<p align="center">
-  <img src="docs/screenshot.png" alt="soundlift results for an 11-minute video: identified songs with Shazam, Apple Music, Spotify and YouTube links, timestamps, and download buttons" width="85%">
-</p>
-
-Click any row to play it, use the timestamp chips to jump to that moment on YouTube, or grab everything with **Download all clips**.
-
 ## Quick start
 
 You need Python 3.10–3.13 and [ffmpeg](https://ffmpeg.org/) (`brew install ffmpeg` / `sudo apt install ffmpeg`).
