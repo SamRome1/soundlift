@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>soundlift</title>
+<style>
+  :root {
+    --bg: #0c0c0e; --panel: #151518; --line: #26262b; --text: #ededf0; --dim: #8b8b94;
+    --music: #7c9cff; --sfx: #3ecf8e; --err: #ff6b6b; --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif; padding-bottom: 110px; }
+  main { max-width: 860px; margin: 0 auto; padding: 48px 20px; }
+  h1 { font-size: 28px; margin: 0 0 4px; letter-spacing: -0.02em; }
+  h1 span { color: var(--sfx); }
+  .tag { color: var(--dim); margin: 0 0 28px; }
+  form { display: flex; gap: 8px; }
+  input[type=url] { flex: 1; background: var(--panel); border: 1px solid var(--line); color: var(--text); border-radius: var(--radius); padding: 14px 16px; font-size: 15px; outline: none; }
+  input[type=url]:focus { border-color: #44444c; }
+  button { background: var(--text); color: var(--bg); border: 0; border-radius: var(--radius); padding: 0 22px; font-weight: 600; font-size: 15px; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: default; }
+  .ghost { background: transparent; color: var(--text); border: 1px solid var(--line); padding: 8px 14px; font-weight: 500; font-size: 13px; text-decoration: none; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; }
+  .ghost:hover { border-color: #44444c; }
+
+  #status { margin-top: 20px; display: none; }
+  .bar { height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; }
+  .bar > div { height: 100%; width: 0; background: linear-gradient(90deg, var(--music), var(--sfx)); transition: width .4s; }
+  .stage { color: var(--dim); font-size: 13px; margin-top: 8px; }
+  .error { color: var(--err); }
+
+  #result { display: none; margin-top: 32px; }
+  .video { display: flex; gap: 16px; align-items: center; margin-bottom: 20px; }
+  .video img { width: 160px; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; }
+  .video h2 { font-size: 18px; margin: 0; line-height: 1.3; }
+  .video .ch { color: var(--dim); font-size: 14px; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+
+  .filters { display: flex; gap: 6px; margin: 24px 0 10px; }
+  .filters button { background: transparent; color: var(--dim); border: 1px solid var(--line); padding: 6px 14px; font-size: 13px; font-weight: 500; border-radius: 999px; }
+  .filters button.on { color: var(--text); border-color: var(--text); }
+
+  .list { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .row { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 10px 14px; border-top: 1px solid var(--line); cursor: pointer; }
+  .row:first-child { border-top: 0; }
+  .row:hover { background: var(--panel); }
+  .row.playing { background: #1b1b20; }
+  .play { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: 12px; }
+  .row.playing .play { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .title { font-weight: 600; }
+  .title .kind { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 2px 6px; border-radius: 4px; margin-right: 8px; vertical-align: 1px; }
+  .kind.music { background: #7c9cff22; color: var(--music); }
+  .kind.sfx { background: #3ecf8e22; color: var(--sfx); }
+  .kind.ambient { background: #f5a62322; color: #f5a623; }
+  .sub { color: var(--dim); font-size: 13px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; margin-top: 2px; }
+  .sub a { color: var(--dim); }
+  .sub a:hover { color: var(--text); }
+  .ts { font-variant-numeric: tabular-nums; font-size: 12px; padding: 1px 6px; border: 1px solid var(--line); border-radius: 4px; text-decoration: none; }
+  .right { display: flex; gap: 6px; align-items: center; }
+  .dl { color: var(--dim); text-decoration: none; font-size: 18px; padding: 4px 8px; border-radius: 6px; }
+  .dl:hover { color: var(--text); background: var(--line); }
+
+  .credits { margin-top: 24px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; font-size: 13px; }
+  .credits h3 { margin: 0 0 6px; font-size: 13px; color: var(--dim); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+  .credits div { white-space: pre-wrap; word-break: break-word; }
+  .note { color: var(--dim); font-size: 12px; margin-top: 20px; }
+
+  .history { margin-top: 40px; }
+  .history h3 { font-size: 13px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; }
+  .history a { display: flex; gap: 12px; align-items: center; padding: 8px 0; color: var(--text); text-decoration: none; border-top: 1px solid var(--line); font-size: 14px; }
+  .history img { width: 72px; aspect-ratio: 16/9; object-fit: cover; border-radius: 4px; }
+  .history span { color: var(--dim); font-size: 12px; }
+
+  #player { position: fixed; left: 0; right: 0; bottom: 0; background: #111114ee; backdrop-filter: blur(12px); border-top: 1px solid var(--line); padding: 12px 20px; display: none; }
+  #player .inner { max-width: 860px; margin: 0 auto; display: flex; gap: 14px; align-items: center; }
+  #player button { background: transparent; color: var(--text); padding: 6px 10px; font-size: 18px; }
+  #player .now { flex: 1; min-width: 0; }
+  #player .now b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #player input[type=range] { width: 100%; accent-color: var(--sfx); }
+</style>
+</head>
+<body>
+<main>
+  <h1>sound<span>lift</span></h1>
+  <p class="tag">Paste a YouTube link. Get back the music and sound effects in it, as a playlist.</p>
+
+  <form id="form">
+    <input id="url" type="url" placeholder="https://www.youtube.com/watch?v=…" required autofocus>
+    <button id="go">Lift</button>
+  </form>
+
+  <div id="status">
+    <div class="bar"><div id="fill"></div></div>
+    <div class="stage" id="stage"></div>
+  </div>
+
+  <section id="result"></section>
+  <section class="history" id="history"></section>
+</main>
+
+<div id="player">
+  <div class="inner">
+    <button id="prev" title="Previous">⏮</button>
+    <button id="toggle" title="Play/pause">⏸</button>
+    <button id="next" title="Next">⏭</button>
+    <div class="now"><b id="nowTitle"></b><input id="seek" type="range" min="0" max="1000" value="0"></div>
+  </div>
+  <audio id="audio"></audio>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const STAGE_TEXT = {
+  download: "Downloading audio…",
+  separate: "Splitting speech, music and sound effects…",
+  tag: "Finding where the music is…",
+  identify: "Identifying songs…",
+  sfx: "Picking out sound effects…",
+  clean: "Cleaning up each clip…",
+  export: "Cutting clips…",
+};
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, "0")}`;
+
+let manifest = null, playlist = [], current = -1, filter = "all";
+const audio = $("#audio");
+
+$("#form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  $("#go").disabled = true;
+  $("#status").style.display = "block";
+  $("#stage").className = "stage";
+  $("#stage").textContent = "Queued…";
+  $("#fill").style.width = "0";
+  try {
+    const r = await fetch("/api/jobs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: $("#url").value }) });
+    if (!r.ok) throw new Error((await r.json()).detail || "Request failed");
+    poll((await r.json()).id);
+  } catch (err) { fail(err.message); }
+});
+
+async function poll(id) {
+  const job = await (await fetch(`/api/jobs/${id}`)).json();
+  $("#fill").style.width = `${job.progress * 100}%`;
+  if (job.status === "queued") $("#stage").textContent = job.position ? `Queued behind ${job.position} other video(s)…` : "Starting…";
+  if (job.status === "running") $("#stage").textContent = STAGE_TEXT[job.stage] || "Working…";
+  if (job.status === "error") return fail(job.error);
+  if (job.status === "done") {
+    $("#go").disabled = false;
+    $("#status").style.display = "none";
+    history.replaceState(null, "", `#${job.video_id}`);
+    loadHistory();
+    return show(job.video_id);
+  }
+  setTimeout(() => poll(id), 1000);
+}
+
+function fail(msg) {
+  $("#go").disabled = false;
+  $("#stage").className = "stage error";
+  $("#stage").textContent = `Something went wrong: ${msg}`;
+}
+
+async function show(vid) {
+  const r = await fetch(`/api/videos/${vid}`);
+  if (!r.ok) return;
+  manifest = await r.json();
+  const m = manifest, count = (k) => m.items.filter((i) => i.kind === k).length;
+  const nMusic = count("music"), nSfx = count("sfx"), nAmb = count("ambient");
+  $("#result").style.display = "block";
+  $("#result").innerHTML = `
+    <div class="video">
+      ${m.thumbnail ? `<img src="${esc(m.thumbnail)}" alt="">` : ""}
+      <div>
+        <h2>${esc(m.title)}</h2>
+        <div class="ch">${esc(m.channel)} · ${nMusic} music · ${nSfx} sound effects${nAmb ? ` · ${nAmb} on-location` : ""}</div>
+        <div class="actions">
+          <a class="ghost" href="/api/videos/${m.id}/zip">⬇ Download all clips</a>
+          <a class="ghost" href="/files/${m.id}/${m.stems.music}" download>Music stem</a>
+          <a class="ghost" href="/files/${m.id}/${m.stems.sfx}" download>SFX stem</a>
+          <a class="ghost" href="${esc(m.url)}" target="_blank" rel="noopener">Watch ↗</a>
+        </div>
+      </div>
+    </div>
+    <div class="filters">
+      <button data-f="all">All ${m.items.length}</button>
+      <button data-f="music">Music ${nMusic}</button>
+      <button data-f="sfx">Sound effects ${nSfx}</button>
+      ${nAmb ? `<button data-f="ambient" title="Probably recorded on location (street, wind, doors), not added in the edit">On-location ${nAmb}</button>` : ""}
+    </div>
+    <div class="list" id="list"></div>
+    ${m.description_credits.length ? `<div class="credits"><h3>Credits in the description</h3><div>${m.description_credits.map(esc).join("\n")}</div></div>` : ""}
+    <p class="note">Identified songs link to where you can find and license them. Clips are pulled from the video for reference and previewing. Check the license before you publish anything that isn't yours.</p>`;
+  document.querySelectorAll(".filters button").forEach((b) => b.addEventListener("click", () => { filter = b.dataset.f; renderList(); }));
+  renderList();
+}
+
+function renderList() {
+  document.querySelectorAll(".filters button").forEach((b) => b.classList.toggle("on", b.dataset.f === filter));
+  playlist = manifest.items.filter((i) => filter === "all" || i.kind === filter);
+  $("#list").innerHTML = playlist.map((it, i) => {
+    const times = it.ranges.slice(0, 8).map(([s]) => `<a class="ts" href="${esc(manifest.url)}&t=${Math.floor(s)}s" target="_blank" rel="noopener" onclick="event.stopPropagation()">${fmt(s)}</a>`).join("");
+    const more = it.ranges.length > 8 ? `<span>+${it.ranges.length - 8} more</span>` : "";
+    let sub = "";
+    if (it.kind === "music") {
+      if (it.identified) {
+        sub = `<span>${esc(it.artist)}</span>
+          ${it.shazam_url ? `<a href="${esc(it.shazam_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Shazam</a>` : ""}
+          ${it.apple_music_url ? `<a href="${esc(it.apple_music_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Apple Music</a>` : ""}
+          <a href="${esc(it.search.spotify)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Spotify</a>
+          <a href="${esc(it.search.youtube)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">YouTube</a>`;
+      } else {
+        sub = `<span>Not in Shazam (likely library/stock or custom music)</span>`;
+      }
+    } else {
+      sub = `<span>${it.ranges.length > 1 ? `used ${it.ranges.length}×` : "used once"}</span>`;
+    }
+    return `<div class="row ${i === current ? "playing" : ""}" data-i="${i}">
+      <div class="play">${i === current && !audio.paused ? "❚❚" : "▶"}</div>
+      <div>
+        <div class="title"><span class="kind ${it.kind}">${{ sfx: "SFX", music: "Music", ambient: "On-location" }[it.kind]}</span>${esc(it.title)}</div>
+        <div class="sub">${sub}${times}${more}</div>
+      </div>
+      <div class="right"><a class="dl" href="/files/${manifest.id}/${esc(it.file)}" download title="Download clip" onclick="event.stopPropagation()">⬇</a></div>
+    </div>`;
+  }).join("") || `<div class="row"><div></div><div class="sub">Nothing found here.</div></div>`;
+  document.querySelectorAll("#list .row[data-i]").forEach((r) => r.addEventListener("click", () => {
+    const i = +r.dataset.i;
+    if (i === current) audio.paused ? audio.play() : audio.pause();
+    else play(i);
+  }));
+}
+
+function play(i) {
+  if (i < 0 || i >= playlist.length) return;
+  current = i;
+  audio.src = `/files/${manifest.id}/${playlist[i].file}`;
+  audio.play();
+  $("#player").style.display = "block";
+  $("#nowTitle").textContent = playlist[i].title + (playlist[i].artist ? ` — ${playlist[i].artist}` : "");
+}
+
+audio.addEventListener("play", () => { $("#toggle").textContent = "⏸"; renderList(); });
+audio.addEventListener("pause", () => { $("#toggle").textContent = "▶"; renderList(); });
+audio.addEventListener("ended", () => play(current + 1));
+audio.addEventListener("timeupdate", () => { if (audio.duration) $("#seek").value = (audio.currentTime / audio.duration) * 1000; });
+$("#seek").addEventListener("input", (e) => { if (audio.duration) audio.currentTime = (e.target.value / 1000) * audio.duration; });
+$("#toggle").addEventListener("click", () => (audio.paused ? audio.play() : audio.pause()));
+$("#next").addEventListener("click", () => play(current + 1));
+$("#prev").addEventListener("click", () => play(Math.max(0, current - 1)));
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT" || !manifest) return;
+  if (e.code === "Space") { e.preventDefault(); current < 0 ? play(0) : audio.paused ? audio.play() : audio.pause(); }
+  if (e.code === "ArrowDown" || e.key === "j") play(current + 1);
+  if (e.code === "ArrowUp" || e.key === "k") play(Math.max(0, current - 1));
+});
+
+async function loadHistory() {
+  const vids = await (await fetch("/api/videos")).json();
+  $("#history").innerHTML = vids.length ? `<h3>Previously lifted</h3>` + vids.map((v) =>
+    `<a href="#${esc(v.id)}">${v.thumbnail ? `<img src="${esc(v.thumbnail)}" alt="">` : ""}<div>${esc(v.title)}<br><span>${esc(v.channel)} · ${v.count} sounds</span></div></a>`).join("") : "";
+}
+
+window.addEventListener("hashchange", () => { current = -1; filter = "all"; show(location.hash.slice(1)); window.scrollTo(0, 0); });
+loadHistory();
+if (location.hash.length > 1) show(location.hash.slice(1));
+</script>
+</body>
+</html>

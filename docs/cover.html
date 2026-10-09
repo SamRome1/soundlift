@@ -1,0 +1,84 @@
+<!doctype html>
+<!-- Source for docs/cover.png and docs/social-preview.png (1280x640). Real results from a soundlift run.
+     Re-render: Chrome --headless=new --screenshot --window-size=1280,640 [--force-device-scale-factor=2] -->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root { --bg: #0c0c0e; --panel: #141417; --line: #26262b; --text: #ededf0; --dim: #8b8b94; --music: #7c9cff; --sfx: #3ecf8e; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1280px; height: 640px; overflow: hidden; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif; position: relative; }
+  .glow { position: absolute; inset: 0; background:
+      radial-gradient(600px 400px at 85% 20%, #3ecf8e18, transparent 70%),
+      radial-gradient(500px 380px at 70% 95%, #7c9cff18, transparent 70%); }
+  .wrap { position: absolute; inset: 0; display: grid; grid-template-columns: 560px 1fr; gap: 56px; padding: 72px 72px 0 80px; }
+
+  .logo { font-size: 64px; font-weight: 750; letter-spacing: -0.035em; line-height: 1; }
+  .logo span { color: var(--sfx); }
+  h1 { font-size: 40px; line-height: 1.12; letter-spacing: -0.025em; font-weight: 650; margin-top: 30px; }
+  h1 em { font-style: normal; color: var(--music); }
+  h1 b { color: var(--sfx); font-weight: 650; }
+  .sub { color: var(--dim); font-size: 19px; line-height: 1.45; margin-top: 18px; max-width: 470px; }
+  .input { margin-top: 34px; display: flex; gap: 8px; }
+  .input div { flex: 1; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 15px 16px; color: var(--dim); font-size: 16px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .input button { background: var(--text); color: var(--bg); border: 0; border-radius: 12px; padding: 0 22px; font-weight: 650; font-size: 16px; font-family: inherit; }
+  .chips { display: flex; gap: 8px; margin-top: 22px; flex-wrap: wrap; }
+  .chips span { border: 1px solid var(--line); color: var(--dim); border-radius: 999px; padding: 6px 12px; font-size: 14px; }
+
+  .card { background: #111114; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; box-shadow: 0 30px 80px #0008; align-self: start; }
+  .head { padding: 16px 18px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--dim); }
+  .head b { color: var(--text); font-weight: 600; }
+  .row { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; padding: 11px 18px; border-top: 1px solid var(--line); }
+  .row:first-of-type { border-top: 0; }
+  .row.on { background: #1a1a1f; }
+  .play { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: 10px; }
+  .row.on .play { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .t { font-weight: 600; font-size: 16px; white-space: nowrap; }
+  .k { font-size: 10px; font-weight: 700; letter-spacing: .07em; padding: 2px 6px; border-radius: 4px; margin-right: 8px; vertical-align: 2px; }
+  .k.m { background: #7c9cff22; color: var(--music); }
+  .k.s { background: #3ecf8e22; color: var(--sfx); }
+  .meta { color: var(--dim); font-size: 13px; margin-top: 2px; display: flex; gap: 8px; align-items: center; }
+  .ts { font-variant-numeric: tabular-nums; font-size: 11px; border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
+  .dl { color: var(--dim); font-size: 16px; }
+
+  .wave { position: absolute; left: 0; right: 0; bottom: 0; height: 64px; display: flex; align-items: flex-end; gap: 3px; padding: 0 80px 22px; opacity: .9; }
+  .wave i { flex: 1; border-radius: 2px; }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="wrap">
+    <div>
+      <div class="logo">sound<span>lift</span></div>
+      <h1>Paste a YouTube link.<br>Get every <em>song</em> and<br><b>sound effect</b> back.</h1>
+      <p class="sub">Songs identified with timestamps and links. Sound effects cut out as clean clips. Open source, runs on your laptop.</p>
+      <div class="input"><div>youtube.com/watch?v=…</div><button>Lift</button></div>
+      <div class="chips"><span>Shazam song ID</span><span>AI stem separation</span><span>527 sound classes</span><span>No API keys</span></div>
+    </div>
+    <div class="card">
+      <div class="head"><span><b>14 songs</b> · <b>28 sound effects</b></span><span>⬇ Download all</span></div>
+      <div class="row on"><div class="play">❚❚</div><div><div class="t"><span class="k m">MUSIC</span>Mama Funk</div><div class="meta">spring gang <span class="ts">0:01</span></div></div><div class="dl">⬇</div></div>
+      <div class="row"><div class="play">▶</div><div><div class="t"><span class="k m">MUSIC</span>High Tech</div><div class="meta">Rocket Jr <span class="ts">1:42</span></div></div><div class="dl">⬇</div></div>
+      <div class="row"><div class="play">▶</div><div><div class="t"><span class="k s">SFX</span>Finger snapping</div><div class="meta">used once <span class="ts">1:21</span></div></div><div class="dl">⬇</div></div>
+      <div class="row"><div class="play">▶</div><div><div class="t"><span class="k s">SFX</span>Ding</div><div class="meta">used 3× <span class="ts">3:41</span><span class="ts">3:43</span><span class="ts">3:45</span></div></div><div class="dl">⬇</div></div>
+      <div class="row"><div class="play">▶</div><div><div class="t"><span class="k m">MUSIC</span>Wild Night at Harry's</div><div class="meta">Harry Edvino <span class="ts">7:28</span><span class="ts">8:21</span></div></div><div class="dl">⬇</div></div>
+      <div class="row"><div class="play">▶</div><div><div class="t"><span class="k s">SFX</span>Beep, bleep</div><div class="meta">used once <span class="ts">7:22</span></div></div><div class="dl">⬇</div></div>
+    </div>
+  </div>
+  <div class="wave" id="wave"></div>
+<script>
+  // Decorative waveform: music bed in blue, sound effects as green spikes.
+  const w = document.getElementById("wave");
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 180; i++) {
+    const spike = [18, 41, 77, 79, 81, 120, 151, 166].includes(i);
+    const h = spike ? 30 + rnd() * 28 : 6 + Math.abs(Math.sin(i / 7)) * 12 + rnd() * 8;
+    const el = document.createElement("i");
+    el.style.height = h + "px";
+    el.style.background = spike ? "#3ecf8e" : "#7c9cff55";
+    w.appendChild(el);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+[project]
+name = "soundlift"
+version = "0.1.0"
+description = "Paste a YouTube link, get back the music and sound effects in it as a playlist."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "torch>=2.6,<2.9",
+    "torchaudio>=2.6,<2.9",  # same minor as torch
+    "librosa>=0.10",
+    "transformers>=4.50",
+    "shazamio>=0.8",
+    "pyloudnorm>=0.1",
+    "soundfile>=0.12",
+    "scipy>=1.11",
+    "numpy>=1.26",
+    "yt-dlp[default]>=2025.1.1",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+]
+
+[project.scripts]
+soundlift = "soundlift.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["soundlift"]
